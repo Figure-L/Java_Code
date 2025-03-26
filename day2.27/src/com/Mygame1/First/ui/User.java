@@ -27,5 +27,7 @@ public class User {
     }
 
 
-
+    public String toString() {
+        return "username=" + name + "&password=" + password;
+    }
 }

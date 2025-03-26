@@ -1,16 +1,16 @@
 package com.Mygame1.First.ui;
 
+import cn.hutool.core.io.FileUtil;
+
 import javax.swing.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class LoginJFrame extends JFrame implements MouseListener {
     //创建一个集合存储正确的用户名和密码
-    static ArrayList<User> list = new ArrayList<>();
-    static {
-        list.add(new User("zhangsan","123"));
-        list.add(new User("lisi","1234"));
-    }
+    static ArrayList<User> allUser = new ArrayList<>();
+
 
     //2.添加用户名输入框
     JTextField username = new JTextField();
@@ -26,6 +26,9 @@ public class LoginJFrame extends JFrame implements MouseListener {
     JLabel rightCode = new JLabel();
 
     public LoginJFrame() {
+        //读取用户信息
+        readUserInfo();
+
         //初始化界面
         initJFrame();
 
@@ -34,6 +37,24 @@ public class LoginJFrame extends JFrame implements MouseListener {
 
         //让当前界面显示出来
         this.setVisible(true);
+    }
+
+    private void readUserInfo() {
+        //读取文件
+        List<String> userInfoList = FileUtil.readUtf8Lines("F:\\idea_2024\\study\\text\\day2.27\\src\\userinfo.txt");
+        //遍历集合读取用户信息
+        for (String str : userInfoList) {
+            String[] userInfoAll = str.split("&");
+            String[] arr1 = userInfoAll[0].split("=");
+            String[] arr2 = userInfoAll[1].split("=");
+
+            User user = new User(arr1[1],arr2[1]);
+            allUser.add(user);
+
+        }
+
+        System.out.println(allUser);
+
     }
 
     public void initView() {
@@ -165,8 +186,9 @@ public class LoginJFrame extends JFrame implements MouseListener {
 
         }
         else if(e.getSource() == register) {
-
-            showJDialog("注册界面");
+            this.setVisible(false);
+           // showJDialog("注册界面");
+            new RegisterJFrame(allUser);
         }else if(e.getSource() == rightCode) {
             rightCode.setText(CodeUtil.getCode());
         }
@@ -204,9 +226,9 @@ public class LoginJFrame extends JFrame implements MouseListener {
     }
 
     public boolean contains(User userInfo) {
-        for(int i=0;i<list.size();i++){
-            if(userInfo.getName().equals(list.get(i).getName())&&
-                    userInfo.getPassword().equals(list.get(i).getPassword())){
+        for(int i=0;i<allUser.size();i++){
+            if(userInfo.getName().equals(allUser.get(i).getName())&&
+                    userInfo.getPassword().equals(allUser.get(i).getPassword())){
                 return true;
             }
         }
